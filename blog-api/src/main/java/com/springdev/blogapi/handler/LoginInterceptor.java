@@ -3,11 +3,13 @@ package com.springdev.blogapi.handler;
 import com.alibaba.fastjson.JSON;
 import com.springdev.blogapi.dao.pojo.SysUser;
 import com.springdev.blogapi.service.LoginService;
+import com.springdev.blogapi.utils.UserThreadLocal;
 import com.springdev.blogapi.vo.ErrorCode;
 import com.springdev.blogapi.vo.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -61,6 +63,13 @@ public class LoginInterceptor implements HandlerInterceptor {
             response.getWriter().print(JSON.toJSONString(result));
             return false;
         }
+        UserThreadLocal.put(sysUser);
         return true;
+    }
+
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable Exception ex) throws Exception {
+        //如果不删除 ThreadLocal中用完的信息 会有内存泄漏的风险
+        UserThreadLocal.remove();
     }
 }
