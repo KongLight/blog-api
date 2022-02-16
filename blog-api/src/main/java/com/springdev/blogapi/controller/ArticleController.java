@@ -31,4 +31,14 @@ public class ArticleController {
 //        int i = 10/0;
         return articleService.listArticle(pageParams);
     }
+
+    /**
+     * 首页 最热文章
+     * @return
+     */
+    @PostMapping("hot")
+    public Result hotArticle(){
+        int limit = 5;
+        return articleService.hotArticle(limit);
+    }
 }
