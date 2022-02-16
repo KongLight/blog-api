@@ -17,4 +17,11 @@ public interface LoginService {
     public Result login(LoginParam loginParam);
 
     SysUser checkToken(String token);
+
+    /**
+     * 退出登录
+     * @param token
+     * @return
+     */
+    Result logout(String token);
 }
