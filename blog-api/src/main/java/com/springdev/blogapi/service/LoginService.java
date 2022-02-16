@@ -1,5 +1,6 @@
 package com.springdev.blogapi.service;
 
+import com.springdev.blogapi.dao.pojo.SysUser;
 import com.springdev.blogapi.vo.Result;
 import com.springdev.blogapi.vo.params.LoginParam;
 
@@ -14,4 +15,6 @@ public interface LoginService {
      * @return
      */
     public Result login(LoginParam loginParam);
+
+    SysUser checkToken(String token);
 }
