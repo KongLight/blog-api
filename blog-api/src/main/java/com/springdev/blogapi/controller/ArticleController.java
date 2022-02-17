@@ -1,5 +1,6 @@
 package com.springdev.blogapi.controller;
 
+import com.springdev.blogapi.common.aop.LogAnnotation;
 import com.springdev.blogapi.dao.mapper.ArticleMapper;
 import com.springdev.blogapi.service.ArticleService;
 import com.springdev.blogapi.vo.Result;
@@ -25,6 +26,8 @@ public class ArticleController {
      * @return
      */
     @PostMapping
+    //加上此注解，代表要对此接口记录日志
+    @LogAnnotation(module="文章",  operator="获取文章列表")
     public Result listArticle(@RequestBody PageParams pageParams){
 //        int i = 10/0;
         return articleService.listArticle(pageParams);
