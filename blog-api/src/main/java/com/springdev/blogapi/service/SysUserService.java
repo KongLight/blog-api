@@ -2,12 +2,15 @@ package com.springdev.blogapi.service;
 
 import com.springdev.blogapi.dao.pojo.SysUser;
 import com.springdev.blogapi.vo.Result;
+import com.springdev.blogapi.vo.UserVo;
 
 /**
  * @Author Chen
  * @create 2022/2/14 23:19
  */
 public interface SysUserService {
+
+    UserVo findUserVoById(Long id);
 
     SysUser findUserById(Long id);
 
