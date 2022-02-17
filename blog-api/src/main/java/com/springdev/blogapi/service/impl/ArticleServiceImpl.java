@@ -3,11 +3,15 @@ package com.springdev.blogapi.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.springdev.blogapi.dao.dos.Archives;
+import com.springdev.blogapi.dao.mapper.ArticleBodyMapper;
 import com.springdev.blogapi.dao.mapper.ArticleMapper;
 import com.springdev.blogapi.dao.pojo.Article;
+import com.springdev.blogapi.dao.pojo.ArticleBody;
 import com.springdev.blogapi.service.ArticleService;
+import com.springdev.blogapi.service.CategoryService;
 import com.springdev.blogapi.service.SysUserService;
 import com.springdev.blogapi.service.TagService;
+import com.springdev.blogapi.vo.ArticleBodyVo;
 import com.springdev.blogapi.vo.ArticleVo;
 import com.springdev.blogapi.vo.Result;
 import com.springdev.blogapi.vo.params.PageParams;
@@ -53,16 +57,27 @@ public class ArticleServiceImpl implements ArticleService {
     private List<ArticleVo> copyList(List<Article> records, boolean isTag, boolean isAuthor) {
         List<ArticleVo> articleVoList = new ArrayList<>();
         for (Article record : records) {
-            articleVoList.add(copy(record, isTag, isAuthor));
+            articleVoList.add(copy(record, isTag, isAuthor, false, false));
         }
         return articleVoList;
     }
 
-    private ArticleVo copy(Article article, boolean isTag, boolean isAuthor) {
+    private List<ArticleVo> copyList(List<Article> records, boolean isTag, boolean isAuthor, boolean isBody, boolean isCategory) {
+        List<ArticleVo> articleVoList = new ArrayList<>();
+        for (Article record : records) {
+            articleVoList.add(copy(record, isTag, isAuthor, isBody, isCategory));
+        }
+        return articleVoList;
+    }
+
+    @Autowired
+    private CategoryService categoryService;
+
+    private ArticleVo copy(Article article, boolean isTag, boolean isAuthor, boolean isBody, boolean isCategory) {
         ArticleVo articleVo = new ArticleVo();
         BeanUtils.copyProperties(article, articleVo);
         articleVo.setCreateDate(new DateTime(article.getCreateDate()).toString("yyyy-MM-dd HH:mm"));
-        //并不是搜友的接口 都需要标签，作者信息
+        //并不是所有的接口 都需要标签，作者信息
         if (isTag) {
             Long articleId = article.getId();
             articleVo.setTags(tagService.findTagsByArticleId(articleId));
@@ -71,7 +86,25 @@ public class ArticleServiceImpl implements ArticleService {
             Long authorId = article.getAuthorId();
             articleVo.setAuthor(sysUserService.findUserById(authorId).getNickname());
         }
+        if (isBody) {
+            Long bodyId = article.getBodyId();
+            articleVo.setBody(findArticleBodyById(bodyId));
+        }
+        if (isCategory) {
+            Long categoryId = article.getCategoryId();
+            articleVo.setCategoryVo(categoryService.findCategoryById(categoryId));
+        }
         return articleVo;
+    }
+
+    @Autowired
+    private ArticleBodyMapper articleBodyMapper;
+
+    private ArticleBodyVo findArticleBodyById(Long bodyId) {
+        ArticleBody articleBody = articleBodyMapper.selectById(bodyId);
+        ArticleBodyVo articleBodyVo = new ArticleBodyVo();
+        articleBodyVo.setContent(articleBody.getContent());
+        return articleBodyVo;
     }
 
     @Override
@@ -100,5 +133,16 @@ public class ArticleServiceImpl implements ArticleService {
     public Result listArchives() {
         List<Archives> archivesList = articleMapper.listArchives();
         return Result.success(archivesList);
+    }
+
+    @Override
+    public Result findArticleById(Long articleId) {
+        /**
+         * 1、根据id查询文章信息
+         * 2、根据bodyId和categoryId 去做关联查询
+         */
+        Article article = articleMapper.selectById(articleId);
+        ArticleVo articleVo = copy(article, true, true, true, true);
+        return Result.success(articleVo);
     }
 }
