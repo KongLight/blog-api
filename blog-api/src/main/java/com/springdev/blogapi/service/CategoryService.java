@@ -1,6 +1,7 @@
 package com.springdev.blogapi.service;
 
 import com.springdev.blogapi.vo.CategoryVo;
+import com.springdev.blogapi.vo.Result;
 
 import java.util.List;
 
@@ -10,4 +11,6 @@ import java.util.List;
  */
 public interface CategoryService {
     CategoryVo findCategoryById(Long categoryId);
+
+    Result findAll();
 }
