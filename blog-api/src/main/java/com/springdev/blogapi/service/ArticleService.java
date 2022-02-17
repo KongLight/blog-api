@@ -1,6 +1,7 @@
 package com.springdev.blogapi.service;
 
 import com.springdev.blogapi.vo.Result;
+import com.springdev.blogapi.vo.params.ArticleParam;
 import com.springdev.blogapi.vo.params.PageParams;
 
 /**
@@ -42,4 +43,11 @@ public interface ArticleService {
      * @return
      */
     Result findArticleById(Long articleId);
+
+    /**
+     * 文章发布服务
+     * @param articleParam
+     * @return
+     */
+    Result publish(ArticleParam articleParam);
 }
