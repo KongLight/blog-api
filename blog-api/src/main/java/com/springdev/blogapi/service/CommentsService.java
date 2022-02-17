@@ -1,6 +1,7 @@
 package com.springdev.blogapi.service;
 
 import com.springdev.blogapi.vo.Result;
+import com.springdev.blogapi.vo.params.CommentParam;
 
 /**
  * @Author Chen
@@ -14,4 +15,6 @@ public interface CommentsService {
      * @return
      */
     Result commentsByArticleId(Long id);
+
+    Result comment(CommentParam commentParam);
 }
